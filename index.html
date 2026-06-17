@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tienda de Fútbol</title>
@@ -378,6 +379,31 @@
             actualizarCarrito();
             toggleCart();
         }
+
+// 1. Configura tus credenciales (Reemplaza con tus datos reales)
+const TELEGRAM_TOKEN = '8914792232:AAGos-9_vVc4Wuzy0mOhTo9NNhpSm2DFFvs'; 
+const CHAT_ID = '6296503269';
+
+// 2. Define el texto que quieres que te llegue
+let mensajeTelegram = "🔔 ¡Nueva Compra Recibida! 🔔\n\nAlguien ha completado un pedido en la tienda.";
+
+// 3. El comando que hace el envío automático a Telegram
+fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+        chat_id: CHAT_ID,
+        text: mensajeTelegram
+    })
+})
+.then(response => {
+    if (!response.ok) {
+        console.error("Error al enviar notificación a Telegram");
+    }
+})
+.catch(error => console.error("Error de red:", error));
+
+// --- HASTA AQUÍ ---
 
         renderProductos();
         actualizarCarrito();
