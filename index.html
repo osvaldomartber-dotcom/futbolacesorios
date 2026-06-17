@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tienda de Fútbol</title>
+    <style>
+        /* Estilos basados en tu imagen (Fondo oscuro y detalles en verde brillante) */
+        :root {
+            --bg-color: #111625;
+            --card-bg: #1e2538;
+            --text-color: #ffffff;
+            --accent-color: #00e676;
+            --accent-hover: #00b359;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: var(--card-bg);
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--accent-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--accent-color);
+        }
+
+        .cart-icon-container {
+            cursor: pointer;
+            position: relative;
+            background: var(--accent-color);
+            color: #000;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .section-title {
+            color: var(--accent-color);
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 10px;
+            margin-top: 40px;
+            font-size: 28px;
+        }
+
+        /* Grid de Productos */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .product-card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+
+        .product-title {
+            font-size: 18px;
+            margin: 0 0 10px 0;
+            font-weight: bold;
+        }
+
+        .product-desc {
+            font-size: 14px;
+            color: #a0aec0;
+            margin-bottom: 15px;
+            flex-grow: 1;
+        }
+
+        .product-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+        }
+
+        .product-price {
+            font-size: 18px;
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+
+        .btn-add {
+            background-color: var(--accent-color);
+            color: #111;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-add:hover {
+            background-color: var(--accent-hover);
+        }
+
+        /* Ventana Modal del Carrito */
+        .cart-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            z-index: 200;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .cart-content {
+            background-color: var(--card-bg);
+            padding: 30px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 80%;
+            overflow-y: auto;
+            border: 1px solid var(--accent-color);
+        }
+
+        .cart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #333;
+            padding-bottom: 10px;
+        }
+
+        .close-cart {
+            cursor: pointer;
+            font-size: 24px;
+            color: #fff;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #333;
+        }
+
+        .btn-remove {
+            background: #ff4d4d;
+            border: none;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        .cart-total {
+            margin-top: 20px;
+            font-size: 20px;
+            text-align: right;
+            font-weight: bold;
+            color: var(--accent-color);
+        }
+
+        .btn-checkout {
+            display: block;
+            width: 100%;
+            background-color: var(--accent-color);
+            color: black;
+            border: none;
+            padding: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">Fútbol Store</div>
+        <div class="cart-icon-container" onclick="toggleCart()">
+            🛒 Carrito (<span id="cart-count">0</span>)
+        </div>
+    </header>
+
+    <div class="container">
+        <h2 class="section-title">Tachos de Fútbol</h2>
+        <div class="products-grid" id="tachos-grid"></div>
+
+        <h2 class="section-title">Casacas e Indumentaria</h2>
+        <div class="products-grid" id="camisas-grid"></div>
+
+        <h2 class="section-title">Guantes de Portero</h2>
+        <div class="products-grid" id="guantes-grid"></div>
+    </div>
+
+    <div class="cart-modal" id="cart-modal">
+        <div class="cart-content">
+            <div class="cart-header">
+                <h3>Tu Carrito</h3>
+                <span class="close-cart" onclick="toggleCart()">&times;</span>
+            </div>
+            <div id="cart-items-container">
+                </div>
+            <div class="cart-total">Total: $<span id="cart-total-price">0.00</span></div>
+            <button class="btn-checkout" onclick="procesarCompra()">Proceder al Pago</button>
+        </div>
+    </div>
+
+    <script>
+        // BASE DE DATOS DE LOS 30 PRODUCTOS (10 por categoría)
+        const productos = [
+            // --- TACHOS (1 al 10) ---
+            { id: 1, categoria: 'tachos', nombre: 'Mizuno Morelia Neo IV', desc: 'Ingeniería japonesa y ligereza extrema insuperable.', precio: 299.99 },
+            { id: 2, categoria: 'tachos', nombre: 'Tekela V4 Magia Pro', desc: 'Diseño sin cordones con ajuste de punto elástico.', precio: 169.99 },
+            { id: 3, categoria: 'tachos', nombre: 'Nike Mercurial Vapor 15', desc: 'Alta velocidad y tracción optimizada para delanteros.', precio: 259.99 },
+            { id: 4, categoria: 'tachos', nombre: 'Adidas Predator Elite', desc: 'Zonas de golpeo de goma para un control de balón perfecto.', precio: 279.99 },
+            { id: 5, categoria: 'tachos', nombre: 'Puma Future Ultimate', desc: 'Ajuste adaptativo FUZIONFIT+ para giros rápidos.', precio: 219.99 },
+            { id: 6, categoria: 'tachos', nombre: 'Adidas Copa Pure 2', desc: 'Piel de primera calidad para un toque clásico y suave.', precio: 229.99 },
+            { id: 7, categoria: 'tachos', nombre: 'Nike Phantom GX II', desc: 'Malla Gripknit que mejora el contacto en climas húmedos.', precio: 269.99 },
+            { id: 8, categoria: 'tachos', nombre: 'New Balance Furon V7', desc: 'Diseño minimalista enfocado en la aceleración pura.', precio: 209.99 },
+            { id: 9, categoria: 'tachos', nombre: 'Puma King Ultimate', desc: 'Material K-BETTER no animal que supera a la piel.', precio: 199.99 },
+            { id: 10, categoria: 'tachos', nombre: 'Mizuno Alpha Made in Japan', desc: 'Velocidad de élite con materiales premium asiáticos.', precio: 319.99 },
+
+            // --- CAMISETAS (11 al 20) ---
+            { id: 11, categoria: 'camisas', nombre: 'Camiseta Real Madrid 2026', desc: 'Local, tejido transpirable AEROREADY.', precio: 95.00 },
+            { id: 12, categoria: 'camisas', nombre: 'Camiseta FC Barcelona 2026', desc: 'Diseño clásico blaugrana con tecnología Dri-FIT.', precio: 95.00 },
+            { id: 13, categoria: 'camisas', nombre: 'Camiseta Manchester City', desc: 'Versión oficial de local, corte atlético Puma.', precio: 90.00 },
+            { id: 14, categoria: 'camisas', nombre: 'Camiseta Selección Argentina', desc: '3 estrellas oficiales, tejido campeón del mundo.', precio: 110.00 },
+            { id: 15, categoria: 'camisas', nombre: 'Camiseta Italia 2026', desc: 'Azul clásico con detalles renacentistas elegantes.', precio: 95.00 },
+            { id: 16, categoria: 'camisas', nombre: 'Camiseta Bayern Múnich', desc: 'Rojo e imponente, máxima ventilación climacool.', precio: 90.00 },
+            { id: 17, categoria: 'camisas', nombre: 'Camiseta PSG Premium', desc: 'Edición especial Jordan de local, estilo urbano.', precio: 100.00 },
+            { id: 18, categoria: 'camisas', nombre: 'Camiseta Liverpool FC', desc: 'El mítico color Red confeccionado con poliéster reciclado.', precio: 92.00 },
+            { id: 19, categoria: 'camisas', nombre: 'Camiseta Arsenal FC', desc: 'Diseño elegante con cañones retro texturizados.', precio: 90.00 },
+            { id: 20, categoria: 'camisas', nombre: 'Camiseta Selección Mexicana', desc: 'Diseño inspirado en el arte prehispánico.', precio: 99.99 },
+
+            // --- GUANTES (21 al 30) ---
+            { id: 21, categoria: 'guantes', nombre: 'Adidas Predator Pro Hybrid', desc: 'Látex URG 2.0 para un agarre profesional y duradero.', precio: 130.00 },
+            { id: 22, categoria: 'guantes', nombre: 'Nike Vapor Grip 3', desc: 'Tecnología envolvente que disminuye la presión en los dedos.', precio: 120.00 },
+            { id: 23, categoria: 'guantes', nombre: 'Reusch Attrakt Freegel', desc: 'Gran flexibilidad y protección de silicona en el dorso.', precio: 85.00 },
+            { id: 24, categoria: 'guantes', nombre: 'Uhlsport Speed Contact', desc: 'Espuma Supergrip+ que garantiza rendimiento top en agua.', precio: 140.00 },
+            { id: 25, categoria: 'guantes', nombre: 'Puma Future Pro', desc: 'Corte negativo para una sensación ceñida y natural.', precio: 95.00 },
+            { id: 26, categoria: 'guantes', nombre: 'HO Soccer Phenomenon', desc: 'Ligereza absoluta con látex magnético de alta gama.', precio: 79.99 },
+            { id: 27, categoria: 'guantes', nombre: 'Rinat Kraken Lethal', desc: 'Máximo volumen y protección para porteros agresivos.', precio: 65.00 },
+            { id: 28, categoria: 'guantes', nombre: 'Sells Total Contact', desc: 'Látex Adhesion Ultra para condiciones extremas de lluvia.', precio: 115.00 },
+            { id: 29, categoria: 'guantes', nombre: 'Elite Sport Real', desc: 'Durabilidad insuperable en terrenos sintéticos o abrasivos.', precio: 70.00 },
+            { id: 30, categoria: 'guantes', nombre: 'SP Fútbol Odin Earhart', desc: 'Marca española con excelente relación calidad-precio.', precio: 55.00 }
+        ];
+
+        // Estado del Carrito
+        let carrito = JSON.parse(localStorage.getItem('carrito_futbol')) || [];
+
+        // Renderizar los productos en sus rejillas correspondientes
+        function renderProductos() {
+            const grids = {
+                tachos: document.getElementById('tachos-grid'),
+                camisas: document.getElementById('camisas-grid'),
+                guantes: document.getElementById('guantes-grid')
+            };
+
+            // Limpiar rejillas
+            grids.tachos.innerHTML = '';
+            grids.camisas.innerHTML = '';
+            grids.guantes.innerHTML = '';
+
+            productos.forEach(prod => {
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                card.innerHTML = `
+                    <div>
+                        <h3 class="product-title">${prod.nombre}</h3>
+                        <p class="product-desc">${prod.desc}</p>
+                    </div>
+                    <div class="product-footer">
+                        <span class="product-price">$${prod.precio.toFixed(2)}</span>
+                        <button class="btn-add" onclick="agregarAlCarrito(${prod.id})">Ver</button>
+                    </div>
+                `;
+                grids[prod.categoria].appendChild(card);
+            });
+        }
+
+        // Agregar un producto al carrito
+        function agregarAlCarrito(id) {
+            const productoSeleccionado = productos.find(p => p.id === id);
+            
+            // Verificar si ya está en el carrito para aumentar la cantidad
+            const existe = carrito.find(item => item.id === id);
+            if (existe) {
+                existe.cantidad += 1;
+            } else {
+                carrito.push({ ...productoSeleccionado, cantidad: 1 });
+            }
+
+            actualizarCarrito();
+        }
+
+        // Eliminar producto del carrito
+        function eliminarDelCarrito(id) {
+            carrito = carrito.filter(item => item.id !== id);
+            actualizarCarrito();
+        }
+
+        // Calcular totales y guardar en LocalStorage
+        function actualizarCarrito() {
+            localStorage.setItem('carrito_futbol', JSON.stringify(carrito));
+            
+            // Actualizar número del contador en el header
+            const totalItems = carrito.reduce((acc, item) => acc + item.cantidad, 0);
+            document.getElementById('cart-count').innerText = totalItems;
+
+            // Renderizar la lista dentro del modal
+            const container = document.getElementById('cart-items-container');
+            container.innerHTML = '';
+
+            let precioTotal = 0;
+
+            if (carrito.length === 0) {
+                container.innerHTML = '<p style="text-align:center; color:#a0aec0;">El carrito está vacío.</p>';
+            } else {
+                carrito.forEach(item => {
+                    precioTotal += item.precio * item.cantidad;
+                    const itemRow = document.createElement('div');
+                    itemRow.className = 'cart-item';
+                    itemRow.innerHTML = `
+                        <div>
+                            <strong>${item.nombre}</strong> (x${item.cantidad})<br>
+                            <span style="color: var(--accent-color); font-size:14px;">$${(item.precio * item.cantidad).toFixed(2)}</span>
+                        </div>
+                        <button class="btn-remove" onclick="eliminarDelCarrito(${item.id})">Quitar</button>
+                    `;
+                    container.appendChild(itemRow);
+                });
+            }
+
+            document.getElementById('cart-total-price').innerText = precioTotal.toFixed(2);
+        }
+
+        // Mostrar / Ocultar el modal del carrito
+        function toggleCart() {
+            const modal = document.getElementById('cart-modal');
+            modal.style.display = (modal.style.display === 'flex') ? 'none' : 'flex';
+        }
+
+        // Acción final para "comprar"
+        function procesarCompra() {
+            if (carrito.length === 0) {
+                alert("Tu carrito está vacío.");
+                return;
+            }
+            alert("¡Gracias por tu simulación de compra! Tus productos han sido procesados.");
+            carrito = [];
+            actualizarCarrito();
+            toggleCart();
+        }
+
+        // Inicializar la página
+        renderProductos();
+        actualizarCarrito();
+    </script>
+</body>
+</html>
