@@ -14,6 +14,124 @@
             --accent-hover: #00b359;
         }
 
+        <nav class="navbar">
+    <div class="nav-container">
+        <div class="nav-logo">Fútbol Store</div>
+        
+        <div class="search-box">
+            <input type="text" id="search-input" placeholder="Buscar tachos, casacas, guantes...">
+            <button class="search-btn" onclick="buscarProductos()">🔍</button>
+        </div>
+
+        <ul class="nav-menu">
+            <li><a href="#tachos-grid">Tachos</a></li>
+            <li><a href="#camisas-grid">Casacas</a></li>
+            <li><a href="#guantes-grid">Guantes</a></li>
+        </ul>
+    </div>
+</nav>
+
+<style>
+    /* Estilos exclusivos para la barra de menú y el buscador */
+    .navbar {
+        background-color: #1e2538; /* Fondo oscuro a juego con tus tarjetas */
+        border-bottom: 2px solid #00e676; /* Línea verde brillante */
+        padding: 15px 20px;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .nav-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+        flex-wrap: wrap; /* Se adapta a pantallas de celular */
+    }
+
+    .nav-logo {
+        font-size: 24px;
+        font-weight: bold;
+        color: #00e676;
+    }
+
+    /* Diseño del Buscador */
+    .search-box {
+        display: flex;
+        flex-grow: 1;
+        max-width: 500px;
+        background-color: #111625;
+        border: 1px solid #333;
+        border-radius: 25px;
+        overflow: hidden;
+        transition: border-color 0.3s;
+    }
+
+    .search-box:focus-within {
+        border-color: #00e676; /* Brilla al hacer clic dentro */
+    }
+
+    .search-box input {
+        width: 100%;
+        background: transparent;
+        border: none;
+        padding: 10px 20px;
+        color: white;
+        font-size: 15px;
+        outline: none;
+    }
+
+    .search-box input::placeholder {
+        color: #a0aec0;
+    }
+
+    .search-btn {
+        background: transparent;
+        border: none;
+        color: #00e676;
+        padding: 0 15px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+
+    /* Diseño del Menú de Enlaces */
+    .nav-menu {
+        list-style: none;
+        display: flex;
+        gap: 20px;
+        margin: 0;
+        padding: 0;
+    }
+
+    .nav-menu a {
+        color: white;
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 16px;
+        transition: color 0.2s;
+    }
+
+    .nav-menu a:hover {
+        color: #00e676; /* Cambia a verde al pasar el mouse */
+    }
+
+    /* Ajuste para pantallas pequeñas (Celulares) */
+    @media (max-width: 768px) {
+        .nav-container {
+            flex-direction: column;
+            gap: 15px;
+        }
+        .search-box {
+            width: 100%;
+            max-width: none;
+            order: 3; /* Pone el buscador abajo en móviles */
+        }
+    }
+</style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--bg-color);
