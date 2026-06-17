@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tienda de Fútbol</title>
     <style>
-        /* Estilos basados en tu imagen (Fondo oscuro y detalles en verde brillante) */
         :root {
             --bg-color: #111625;
             --card-bg: #1e2538;
@@ -42,7 +41,6 @@
 
         .cart-icon-container {
             cursor: pointer;
-            position: relative;
             background: var(--accent-color);
             color: #000;
             padding: 10px 20px;
@@ -64,7 +62,6 @@
             font-size: 28px;
         }
 
-        /* Grid de Productos */
         .products-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -75,11 +72,26 @@
         .product-card {
             background-color: var(--card-bg);
             border-radius: 8px;
-            padding: 20px;
+            padding: 0;
+            overflow: hidden;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+
+        .product-img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            background-color: #111;
+        }
+
+        .product-info {
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
         }
 
         .product-title {
@@ -99,7 +111,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-top: 15px;
+            margin-top: auto;
         }
 
         .product-price {
@@ -123,7 +135,6 @@
             background-color: var(--accent-hover);
         }
 
-        /* Ventana Modal del Carrito */
         .cart-modal {
             display: none;
             position: fixed;
@@ -228,57 +239,53 @@
                 <h3>Tu Carrito</h3>
                 <span class="close-cart" onclick="toggleCart()">&times;</span>
             </div>
-            <div id="cart-items-container">
-                </div>
+            <div id="cart-items-container"></div>
             <div class="cart-total">Total: $<span id="cart-total-price">0.00</span></div>
             <button class="btn-checkout" onclick="procesarCompra()">Proceder al Pago</button>
         </div>
     </div>
 
     <script>
-        // BASE DE DATOS DE LOS 30 PRODUCTOS (10 por categoría)
         const productos = [
             // --- TACHOS (1 al 10) ---
-            { id: 1, categoria: 'tachos', nombre: 'Mizuno Morelia Neo IV', desc: 'Ingeniería japonesa y ligereza extrema insuperable.', precio: 299.99 },
-            { id: 2, categoria: 'tachos', nombre: 'Tekela V4 Magia Pro', desc: 'Diseño sin cordones con ajuste de punto elástico.', precio: 169.99 },
-            { id: 3, categoria: 'tachos', nombre: 'Nike Mercurial Vapor 15', desc: 'Alta velocidad y tracción optimizada para delanteros.', precio: 259.99 },
-            { id: 4, categoria: 'tachos', nombre: 'Adidas Predator Elite', desc: 'Zonas de golpeo de goma para un control de balón perfecto.', precio: 279.99 },
-            { id: 5, categoria: 'tachos', nombre: 'Puma Future Ultimate', desc: 'Ajuste adaptativo FUZIONFIT+ para giros rápidos.', precio: 219.99 },
-            { id: 6, categoria: 'tachos', nombre: 'Adidas Copa Pure 2', desc: 'Piel de primera calidad para un toque clásico y suave.', precio: 229.99 },
-            { id: 7, categoria: 'tachos', nombre: 'Nike Phantom GX II', desc: 'Malla Gripknit que mejora el contacto en climas húmedos.', precio: 269.99 },
-            { id: 8, categoria: 'tachos', nombre: 'New Balance Furon V7', desc: 'Diseño minimalista enfocado en la aceleración pura.', precio: 209.99 },
-            { id: 9, categoria: 'tachos', nombre: 'Puma King Ultimate', desc: 'Material K-BETTER no animal que supera a la piel.', precio: 199.99 },
-            { id: 10, categoria: 'tachos', nombre: 'Mizuno Alpha Made in Japan', desc: 'Velocidad de élite con materiales premium asiáticos.', precio: 319.99 },
+            { id: 1, categoria: 'tachos', imagen: 'https://images.unsplash.com/photo-1511886929837-354d827aae26?w=400&q=80', nombre: 'Mizuno Morelia Neo IV', desc: 'Ingeniería japonesa y ligereza extrema insuperable.', precio: 299.99 },
+            { id: 2, categoria: 'tachos', imagen: 'https://images.unsplash.com/photo-1544698310-74ea9d1c8258?w=400&q=80', nombre: 'Tekela V4 Magia Pro', desc: 'Diseño sin cordones con ajuste de punto elástico.', precio: 169.99 },
+            { id: 3, categoria: 'tachos', imagen: 'https://images.unsplash.com/photo-1608245365228-604356b5e7a1?w=400&q=80', nombre: 'Nike Mercurial Vapor 15', desc: 'Alta velocidad y tracción optimizada para delanteros.', precio: 259.99 },
+            { id: 4, categoria: 'tachos', imagen: 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=400&q=80', nombre: 'Adidas Predator Elite', desc: 'Zonas de golpeo de goma para un control de balón perfecto.', precio: 279.99 },
+            { id: 5, categoria: 'tachos', imagen: 'https://images.unsplash.com/photo-1520521873426-e1e3b2e51921?w=400&q=80', nombre: 'Puma Future Ultimate', desc: 'Ajuste adaptativo FUZIONFIT+ para giros rápidos.', precio: 219.99 },
+            { id: 6, categoria: 'tachos', imagen: 'https://images.unsplash.com/photo-1510566337590-2fc1f21d0faa?w=400&q=80', nombre: 'Adidas Copa Pure 2', desc: 'Piel de primera calidad para un toque clásico y suave.', precio: 229.99 },
+            { id: 7, categoria: 'tachos', imagen: 'https://images.unsplash.com/photo-1517466787929-bc90951d0974?w=400&q=80', nombre: 'Nike Phantom GX II', desc: 'Malla Gripknit que mejora el contacto en climas húmedos.', precio: 269.99 },
+            { id: 8, categoria: 'tachos', imagen: 'https://images.unsplash.com/photo-1551958219-acbc608c6d77?w=400&q=80', nombre: 'New Balance Furon V7', desc: 'Diseño minimalista enfocado en la aceleración pura.', precio: 209.99 },
+            { id: 9, categoria: 'tachos', imagen: 'https://images.unsplash.com/photo-1575361204480-aadea255f549?w=400&q=80', nombre: 'Puma King Ultimate', desc: 'Material K-BETTER no animal que supera a la piel.', precio: 199.99 },
+            { id: 10, categoria: 'tachos', imagen: 'https://images.unsplash.com/photo-1531415074968-036ba1b575da?w=400&q=80', nombre: 'Mizuno Alpha Japan', desc: 'Velocidad de élite con materiales premium asiáticos.', precio: 319.99 },
 
             // --- CAMISETAS (11 al 20) ---
-            { id: 11, categoria: 'camisas', nombre: 'Camiseta Real Madrid 2026', desc: 'Local, tejido transpirable AEROREADY.', precio: 95.00 },
-            { id: 12, categoria: 'camisas', nombre: 'Camiseta FC Barcelona 2026', desc: 'Diseño clásico blaugrana con tecnología Dri-FIT.', precio: 95.00 },
-            { id: 13, categoria: 'camisas', nombre: 'Camiseta Manchester City', desc: 'Versión oficial de local, corte atlético Puma.', precio: 90.00 },
-            { id: 14, categoria: 'camisas', nombre: 'Camiseta Selección Argentina', desc: '3 estrellas oficiales, tejido campeón del mundo.', precio: 110.00 },
-            { id: 15, categoria: 'camisas', nombre: 'Camiseta Italia 2026', desc: 'Azul clásico con detalles renacentistas elegantes.', precio: 95.00 },
-            { id: 16, categoria: 'camisas', nombre: 'Camiseta Bayern Múnich', desc: 'Rojo e imponente, máxima ventilación climacool.', precio: 90.00 },
-            { id: 17, categoria: 'camisas', nombre: 'Camiseta PSG Premium', desc: 'Edición especial Jordan de local, estilo urbano.', precio: 100.00 },
-            { id: 18, categoria: 'camisas', nombre: 'Camiseta Liverpool FC', desc: 'El mítico color Red confeccionado con poliéster reciclado.', precio: 92.00 },
-            { id: 19, categoria: 'camisas', nombre: 'Camiseta Arsenal FC', desc: 'Diseño elegante con cañones retro texturizados.', precio: 90.00 },
-            { id: 20, categoria: 'camisas', nombre: 'Camiseta Selección Mexicana', desc: 'Diseño inspirado en el arte prehispánico.', precio: 99.99 },
+            { id: 11, categoria: 'camisas', imagen: 'https://images.unsplash.com/photo-1622146430341-a1e6ecb001a1?w=400&q=80', nombre: 'Camiseta Real Madrid', desc: 'Local, tejido transpirable AEROREADY.', precio: 95.00 },
+            { id: 12, categoria: 'camisas', imagen: 'https://images.unsplash.com/photo-1556817411-31ae72fa3ea0?w=400&q=80', nombre: 'Camiseta FC Barcelona', desc: 'Diseño clásico blaugrana con tecnología Dri-FIT.', precio: 95.00 },
+            { id: 13, categoria: 'camisas', imagen: 'https://images.unsplash.com/photo-1599474924187-334a4ae5bd3c?w=400&q=80', nombre: 'Camiseta Manchester City', desc: 'Versión oficial de local, corte atlético Puma.', precio: 90.00 },
+            { id: 14, categoria: 'camisas', imagen: 'https://images.unsplash.com/photo-1518063319789-7217e6706b04?w=400&q=80', nombre: 'Camiseta Argentina', desc: '3 estrellas oficiales, tejido campeón del mundo.', precio: 110.00 },
+            { id: 15, categoria: 'camisas', imagen: 'https://images.unsplash.com/photo-1543326727-cf6c39e8f84c?w=400&q=80', nombre: 'Camiseta Italia 2026', desc: 'Azul clásico con detalles renacentistas elegantes.', precio: 95.00 },
+            { id: 16, categoria: 'camisas', imagen: 'https://images.unsplash.com/photo-1563299444-22a44d0554c6?w=400&q=80', nombre: 'Camiseta Bayern Múnich', desc: 'Rojo e imponente, máxima ventilación climacool.', precio: 90.00 },
+            { id: 17, categoria: 'camisas', imagen: 'https://images.unsplash.com/photo-1504305754058-2f08cdf28f0e?w=400&q=80', nombre: 'Camiseta PSG Premium', desc: 'Edición especial Jordan de local, estilo urbano.', precio: 100.00 },
+            { id: 18, categoria: 'camisas', imagen: 'https://images.unsplash.com/photo-1579952362874-460f38db3a15?w=400&q=80', nombre: 'Camiseta Liverpool FC', desc: 'El mítico color Red hecho con poliéster reciclado.', precio: 92.00 },
+            { id: 19, categoria: 'camisas', imagen: 'https://images.unsplash.com/photo-1530541930197-ff16ac917b0e?w=400&q=80', nombre: 'Camiseta Arsenal FC', desc: 'Diseño elegante con cañones retro texturizados.', precio: 90.00 },
+            { id: 20, categoria: 'camisas', imagen: 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=400&q=80', nombre: 'Camiseta México 2026', desc: 'Diseño inspirado en el arte prehispánico mexicano.', precio: 99.99 },
 
             // --- GUANTES (21 al 30) ---
-            { id: 21, categoria: 'guantes', nombre: 'Adidas Predator Pro Hybrid', desc: 'Látex URG 2.0 para un agarre profesional y duradero.', precio: 130.00 },
-            { id: 22, categoria: 'guantes', nombre: 'Nike Vapor Grip 3', desc: 'Tecnología envolvente que disminuye la presión en los dedos.', precio: 120.00 },
-            { id: 23, categoria: 'guantes', nombre: 'Reusch Attrakt Freegel', desc: 'Gran flexibilidad y protección de silicona en el dorso.', precio: 85.00 },
-            { id: 24, categoria: 'guantes', nombre: 'Uhlsport Speed Contact', desc: 'Espuma Supergrip+ que garantiza rendimiento top en agua.', precio: 140.00 },
-            { id: 25, categoria: 'guantes', nombre: 'Puma Future Pro', desc: 'Corte negativo para una sensación ceñida y natural.', precio: 95.00 },
-            { id: 26, categoria: 'guantes', nombre: 'HO Soccer Phenomenon', desc: 'Ligereza absoluta con látex magnético de alta gama.', precio: 79.99 },
-            { id: 27, categoria: 'guantes', nombre: 'Rinat Kraken Lethal', desc: 'Máximo volumen y protección para porteros agresivos.', precio: 65.00 },
-            { id: 28, categoria: 'guantes', nombre: 'Sells Total Contact', desc: 'Látex Adhesion Ultra para condiciones extremas de lluvia.', precio: 115.00 },
-            { id: 29, categoria: 'guantes', nombre: 'Elite Sport Real', desc: 'Durabilidad insuperable en terrenos sintéticos o abrasivos.', precio: 70.00 },
-            { id: 30, categoria: 'guantes', nombre: 'SP Fútbol Odin Earhart', desc: 'Marca española con excelente relación calidad-precio.', precio: 55.00 }
+            { id: 21, categoria: 'guantes', imagen: 'https://images.unsplash.com/photo-1606925797300-0b35e9d17400?w=400&q=80', nombre: 'Predator Pro Hybrid', desc: 'Látex URG 2.0 para un agarre profesional duradero.', precio: 130.00 },
+            { id: 22, categoria: 'guantes', imagen: 'https://images.unsplash.com/photo-1516731415730-0c641d04de3c?w=400&q=80', nombre: 'Nike Vapor Grip 3', desc: 'Tecnología envolvente que disminuye la presión.', precio: 120.00 },
+            { id: 23, categoria: 'guantes', imagen: 'https://images.unsplash.com/photo-1601646761285-65bfa67cd7a3?w=400&q=80', nombre: 'Reusch Attrakt Freegel', desc: 'Gran flexibilidad y protección de silicona.', precio: 85.00 },
+            { id: 24, categoria: 'guantes', imagen: 'https://images.unsplash.com/photo-1518156677180-95a2893f3e9f?w=400&q=80', nombre: 'Uhlsport Speed Contact', desc: 'Espuma Supergrip+ excelente para lluvia.', precio: 140.00 },
+            { id: 25, categoria: 'guantes', imagen: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=400&q=80', nombre: 'Puma Future Pro', desc: 'Corte negativo para una sensación ceñida.', precio: 95.00 },
+            { id: 26, categoria: 'guantes', imagen: 'https://images.unsplash.com/photo-1431324155629-1a6edd1d1315?w=400&q=80', nombre: 'HO Soccer Phenomenon', desc: 'Ligereza absoluta con látex magnético premium.', precio: 79.99 },
+            { id: 27, categoria: 'guantes', imagen: 'https://images.unsplash.com/photo-1552667466-07770ae110d0?w=400&q=80', nombre: 'Rinat Kraken Lethal', desc: 'Máximo volumen y protección para el arquero.', precio: 65.00 },
+            { id: 28, categoria: 'guantes', imagen: 'https://images.unsplash.com/photo-1510051640316-ecc39422817e?w=400&q=80', nombre: 'Sells Total Contact', desc: 'Látex Adhesion Ultra para condiciones extremas.', precio: 115.00 },
+            { id: 29, categoria: 'guantes', imagen: 'https://images.unsplash.com/photo-1505156868547-9b49f4df4e04?w=400&q=80', nombre: 'Elite Sport Real', desc: 'Durabilidad insuperable en terrenos sintéticos.', precio: 70.00 },
+            { id: 30, categoria: 'guantes', imagen: 'https://images.unsplash.com/photo-1543326727-cf6c39e8f84c?w=400&q=80', nombre: 'SP Fútbol Odin Earhart', desc: 'Marca de confianza con excelente balance y precio.', precio: 55.00 }
         ];
 
-        // Estado del Carrito
         let carrito = JSON.parse(localStorage.getItem('carrito_futbol')) || [];
 
-        // Renderizar los productos en sus rejillas correspondientes
         function renderProductos() {
             const grids = {
                 tachos: document.getElementById('tachos-grid'),
@@ -286,7 +293,6 @@
                 guantes: document.getElementById('guantes-grid')
             };
 
-            // Limpiar rejillas
             grids.tachos.innerHTML = '';
             grids.camisas.innerHTML = '';
             grids.guantes.innerHTML = '';
@@ -295,49 +301,43 @@
                 const card = document.createElement('div');
                 card.className = 'product-card';
                 card.innerHTML = `
-                    <div>
+                    <img class="product-img" src="${prod.imagen}" alt="${prod.nombre}" loading="lazy">
+                    <div class="product-info">
                         <h3 class="product-title">${prod.nombre}</h3>
                         <p class="product-desc">${prod.desc}</p>
-                    </div>
-                    <div class="product-footer">
-                        <span class="product-price">$${prod.precio.toFixed(2)}</span>
-                        <button class="btn-add" onclick="agregarAlCarrito(${prod.id})">Ver</button>
+                        <div class="product-footer">
+                            <span class="product-price">$${prod.precio.toFixed(2)}</span>
+                            <button class="btn-add" onclick="agregarAlCarrito(${prod.id})">Ver</button>
+                        </div>
                     </div>
                 `;
                 grids[prod.categoria].appendChild(card);
             });
         }
 
-        // Agregar un producto al carrito
         function agregarAlCarrito(id) {
             const productoSeleccionado = productos.find(p => p.id === id);
-            
-            // Verificar si ya está en el carrito para aumentar la cantidad
             const existe = carrito.find(item => item.id === id);
+            
             if (existe) {
                 existe.cantidad += 1;
             } else {
                 carrito.push({ ...productoSeleccionado, cantidad: 1 });
             }
-
             actualizarCarrito();
         }
 
-        // Eliminar producto del carrito
         function eliminarDelCarrito(id) {
             carrito = carrito.filter(item => item.id !== id);
             actualizarCarrito();
         }
 
-        // Calcular totales y guardar en LocalStorage
         function actualizarCarrito() {
             localStorage.setItem('carrito_futbol', JSON.stringify(carrito));
             
-            // Actualizar número del contador en el header
             const totalItems = carrito.reduce((acc, item) => acc + item.cantidad, 0);
             document.getElementById('cart-count').innerText = totalItems;
 
-            // Renderizar la lista dentro del modal
             const container = document.getElementById('cart-items-container');
             container.innerHTML = '';
 
@@ -360,29 +360,25 @@
                     container.appendChild(itemRow);
                 });
             }
-
             document.getElementById('cart-total-price').innerText = precioTotal.toFixed(2);
         }
 
-        // Mostrar / Ocultar el modal del carrito
         function toggleCart() {
             const modal = document.getElementById('cart-modal');
             modal.style.display = (modal.style.display === 'flex') ? 'none' : 'flex';
         }
 
-        // Acción final para "comprar"
         function procesarCompra() {
             if (carrito.length === 0) {
                 alert("Tu carrito está vacío.");
                 return;
             }
-            alert("¡Gracias por tu simulación de compra! Tus productos han sido procesados.");
+            alert("¡Compra procesada con éxito!");
             carrito = [];
             actualizarCarrito();
             toggleCart();
         }
 
-        // Inicializar la página
         renderProductos();
         actualizarCarrito();
     </script>
